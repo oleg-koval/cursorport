@@ -33,7 +33,7 @@ function printBanner(): void {
 function printResult(r: MigrationResult): void {
   const icon = ICON[r.status]
   const label = chalk.bold(LABEL[r.target].padEnd(18))
-  const count = r.count != null ? chalk.dim(` (${r.count})`) : ''
+  const count = r.count != null ? chalk.dim(` (${String(r.count)})`) : ''
   const msg = r.message ? chalk.dim(` ${r.message}`) : ''
   console.log(`  ${icon}  ${label}${count}${msg}`)
   if (r.failures?.length) {
@@ -56,7 +56,9 @@ function printHints(paths: ReturnType<typeof resolvePaths>): void {
     hints.push(`Font: ${chalk.bold(name)} — make sure it's installed on your system`)
   }
   if (theme.colorTheme) {
-    hints.push(`Theme: ${chalk.bold(theme.colorTheme)} — verify its extension is installed in VS Code`)
+    hints.push(
+      `Theme: ${chalk.bold(theme.colorTheme)} — verify its extension is installed in VS Code`,
+    )
   }
   if (theme.iconTheme) {
     hints.push(`Icon theme: ${chalk.bold(theme.iconTheme)}`)
@@ -87,7 +89,7 @@ async function run(): Promise<void> {
       '--only <targets>',
       'Comma-separated targets: settings,keybindings,snippets,profiles,extensions',
     )
-    .action(async (opts: { dryRun: boolean; force: boolean; skipExtensions: boolean; only?: string }) => {
+    .action((opts: { dryRun: boolean; force: boolean; skipExtensions: boolean; only?: string }) => {
       printBanner()
 
       if (opts.dryRun) {
@@ -97,21 +99,22 @@ async function run(): Promise<void> {
       const suffix = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)
       const paths = resolvePaths(suffix)
 
-      const only = opts.only
-        ? (opts.only.split(',').map((s) => s.trim()) as MigrationTarget[])
-        : undefined
+      const migrationOpts: import('./types.js').MigrationOptions = {
+        dryRun: opts.dryRun,
+        force: opts.force,
+        skipExtensions: opts.skipExtensions,
+      }
+      if (opts.only) {
+        migrationOpts.only = opts.only.split(',').map((s) => s.trim()) as MigrationTarget[]
+      }
 
       const spinner = ora({ text: 'Migrating…', color: 'cyan' }).start()
 
-      const results = await migrate(
-        paths,
-        { dryRun: opts.dryRun, force: opts.force, skipExtensions: opts.skipExtensions, only },
-        (r) => {
-          spinner.stop()
-          printResult(r)
-          spinner.start()
-        },
-      )
+      const results = migrate(paths, migrationOpts, (r) => {
+        spinner.stop()
+        printResult(r)
+        spinner.start()
+      })
 
       spinner.stop()
 
@@ -122,7 +125,9 @@ async function run(): Promise<void> {
       if (failed.length === 0) {
         console.log(chalk.green('  Migration complete.'))
       } else {
-        console.log(chalk.yellow(`  Done with ${failed.length} failure(s). Check output above.`))
+        console.log(
+          chalk.yellow(`  Done with ${String(failed.length)} failure(s). Check output above.`),
+        )
       }
 
       if (!opts.dryRun && ok.length > 0) {
@@ -137,7 +142,7 @@ async function run(): Promise<void> {
   program
     .command('check')
     .description('Check what would be migrated without making changes')
-    .action(async () => {
+    .action(() => {
       program.parse(['', '', 'migrate', '--dry-run'], { from: 'user' })
     })
 

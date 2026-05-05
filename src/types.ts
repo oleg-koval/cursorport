@@ -5,12 +5,7 @@ export interface MigrationOptions {
   only?: MigrationTarget[]
 }
 
-export type MigrationTarget =
-  | 'settings'
-  | 'keybindings'
-  | 'snippets'
-  | 'profiles'
-  | 'extensions'
+export type MigrationTarget = 'settings' | 'keybindings' | 'snippets' | 'profiles' | 'extensions'
 
 export interface MigrationResult {
   target: MigrationTarget

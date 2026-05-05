@@ -10,6 +10,7 @@ labels: bug
 **cursorport version:**
 
 **Command run:**
+
 ```
 npx cursorport migrate
 ```
@@ -19,6 +20,7 @@ npx cursorport migrate
 **Actual behavior:**
 
 **Error output:**
+
 ```
 paste here
 ```

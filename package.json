@@ -2,7 +2,14 @@
   "name": "cursorport",
   "version": "0.0.0",
   "description": "Migrate everything from Cursor to VS Code — settings, keybindings, snippets, extensions, themes, fonts",
-  "keywords": ["cursor", "vscode", "migration", "settings", "extensions", "developer-tools"],
+  "keywords": [
+    "cursor",
+    "vscode",
+    "migration",
+    "settings",
+    "extensions",
+    "developer-tools"
+  ],
   "author": "Oleg Koval <oleg.koval@teifi.com>",
   "license": "MIT",
   "repository": {
@@ -23,7 +30,9 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",

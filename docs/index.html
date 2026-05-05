@@ -1,459 +1,672 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>cursorport — migrate Cursor → VS Code</title>
-  <meta name="description" content="Migrate everything from Cursor to VS Code in one command — settings, keybindings, snippets, profiles, extensions, themes, and fonts.">
-  <meta name="keywords" content="cursor, vscode, migration, settings, extensions, developer tools, cli, node">
-  <meta name="author" content="Oleg Koval">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cursorport — migrate Cursor → VS Code</title>
+    <meta
+      name="description"
+      content="Migrate everything from Cursor to VS Code in one command — settings, keybindings, snippets, profiles, extensions, themes, and fonts."
+    />
+    <meta
+      name="keywords"
+      content="cursor, vscode, migration, settings, extensions, developer tools, cli, node"
+    />
+    <meta name="author" content="Oleg Koval" />
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="cursorport — migrate Cursor → VS Code">
-  <meta property="og:description" content="Migrate everything from Cursor to VS Code in one command.">
-  <meta property="og:url" content="https://oleg-koval.github.io/cursorport/">
-  <meta property="og:image" content="https://oleg-koval.github.io/cursorport/social-card.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="cursorport social card showing terminal migration output">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="cursorport — migrate Cursor → VS Code" />
+    <meta
+      property="og:description"
+      content="Migrate everything from Cursor to VS Code in one command."
+    />
+    <meta property="og:url" content="https://oleg-koval.github.io/cursorport/" />
+    <meta property="og:image" content="https://oleg-koval.github.io/cursorport/social-card.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="cursorport social card showing terminal migration output"
+    />
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="cursorport — migrate Cursor → VS Code">
-  <meta name="twitter:description" content="Migrate everything from Cursor to VS Code in one command.">
-  <meta name="twitter:image" content="https://oleg-koval.github.io/cursorport/social-card.png">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="cursorport — migrate Cursor → VS Code" />
+    <meta
+      name="twitter:description"
+      content="Migrate everything from Cursor to VS Code in one command."
+    />
+    <meta name="twitter:image" content="https://oleg-koval.github.io/cursorport/social-card.png" />
 
-  <link rel="icon" type="image/svg+xml" href="../logo.svg">
-  <link rel="canonical" href="https://oleg-koval.github.io/cursorport/">
+    <link rel="icon" type="image/svg+xml" href="../logo.svg" />
+    <link rel="canonical" href="https://oleg-koval.github.io/cursorport/" />
 
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-    :root {
-      --green:       #00ff41;
-      --green-dim:   #00c020;
-      --green-faint: #004010;
-      --green-glow:  rgba(0,255,65,0.15);
-      --bg:          #000000;
-      --bg2:         #060d06;
-      --bg3:         #0a1a0a;
-      --border:      rgba(0,255,65,0.25);
-      --text:        #b0b0b0;
-      --text-dim:    #555;
-      --mono:        'SF Mono','Cascadia Code','Fira Code',Consolas,'Courier New',monospace;
-    }
+      :root {
+        --green: #00ff41;
+        --green-dim: #00c020;
+        --green-faint: #004010;
+        --green-glow: rgba(0, 255, 65, 0.15);
+        --bg: #000000;
+        --bg2: #060d06;
+        --bg3: #0a1a0a;
+        --border: rgba(0, 255, 65, 0.25);
+        --text: #b0b0b0;
+        --text-dim: #555;
+        --mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace;
+      }
 
-    html { scroll-behavior: smooth; }
+      html {
+        scroll-behavior: smooth;
+      }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 15px;
-      line-height: 1.7;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--mono);
+        font-size: 15px;
+        line-height: 1.7;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
 
-    /* matrix canvas */
-    #matrix {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      opacity: 0.12;
-      pointer-events: none;
-    }
+      /* matrix canvas */
+      #matrix {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        opacity: 0.12;
+        pointer-events: none;
+      }
 
-    /* scanline overlay */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 3px,
-        rgba(0,0,0,0.06) 3px,
-        rgba(0,0,0,0.06) 4px
-      );
-      pointer-events: none;
-      z-index: 9999;
-    }
+      /* scanline overlay */
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 3px,
+          rgba(0, 0, 0, 0.06) 3px,
+          rgba(0, 0, 0, 0.06) 4px
+        );
+        pointer-events: none;
+        z-index: 9999;
+      }
 
-    .site {
-      position: relative;
-      z-index: 1;
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 5rem 2rem 4rem;
-    }
+      .site {
+        position: relative;
+        z-index: 1;
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 5rem 2rem 4rem;
+      }
 
-    /* ── header ── */
-    .header { margin-bottom: 4rem; }
+      /* ── header ── */
+      .header {
+        margin-bottom: 4rem;
+      }
 
-    .prompt {
-      font-size: clamp(2.4rem, 5vw, 3.6rem);
-      font-weight: 700;
-      color: var(--green);
-      text-shadow: 0 0 20px rgba(0,255,65,0.5), 0 0 40px rgba(0,255,65,0.2);
-      letter-spacing: -0.02em;
-      margin-bottom: 0.5rem;
-    }
+      .prompt {
+        font-size: clamp(2.4rem, 5vw, 3.6rem);
+        font-weight: 700;
+        color: var(--green);
+        text-shadow:
+          0 0 20px rgba(0, 255, 65, 0.5),
+          0 0 40px rgba(0, 255, 65, 0.2);
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+      }
 
-    .cursor {
-      display: inline-block;
-      animation: blink 1s step-end infinite;
-      color: var(--green);
-    }
-    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+      .cursor {
+        display: inline-block;
+        animation: blink 1s step-end infinite;
+        color: var(--green);
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
 
-    .tagline {
-      font-size: 1.15rem;
-      color: var(--text);
-      margin-bottom: 0.4rem;
-    }
-    .tagline strong { color: #fff; }
-    .tagline .arrow { color: var(--green); }
+      .tagline {
+        font-size: 1.15rem;
+        color: var(--text);
+        margin-bottom: 0.4rem;
+      }
+      .tagline strong {
+        color: #fff;
+      }
+      .tagline .arrow {
+        color: var(--green);
+      }
 
-    .badges {
-      display: flex;
-      gap: 0.6rem;
-      flex-wrap: wrap;
-      margin-top: 1.2rem;
-    }
-    .badges a { display: inline-flex; }
-    .badges img { height: 20px; }
+      .badges {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin-top: 1.2rem;
+      }
+      .badges a {
+        display: inline-flex;
+      }
+      .badges img {
+        height: 20px;
+      }
 
-    /* ── sections ── */
-    section { margin-bottom: 3.5rem; }
+      /* ── sections ── */
+      section {
+        margin-bottom: 3.5rem;
+      }
 
-    .section-label {
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      color: var(--green-dim);
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
+      .section-label {
+        font-size: 0.75rem;
+        letter-spacing: 0.15em;
+        color: var(--green-dim);
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .section-label::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
 
-    /* ── terminal box ── */
-    .terminal {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 0 40px rgba(0,255,65,0.05), inset 0 0 60px rgba(0,0,0,0.4);
-    }
+      /* ── terminal box ── */
+      .terminal {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow:
+          0 0 40px rgba(0, 255, 65, 0.05),
+          inset 0 0 60px rgba(0, 0, 0, 0.4);
+      }
 
-    .term-bar {
-      background: var(--bg3);
-      padding: 0.55rem 1rem;
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .term-bar::before {
-      content: '● ● ●';
-      letter-spacing: 0.3em;
-      color: var(--green-faint);
-      font-size: 0.6rem;
-    }
+      .term-bar {
+        background: var(--bg3);
+        padding: 0.55rem 1rem;
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .term-bar::before {
+        content: '● ● ●';
+        letter-spacing: 0.3em;
+        color: var(--green-faint);
+        font-size: 0.6rem;
+      }
 
-    .term-body {
-      padding: 1.4rem 1.6rem 1.6rem;
-      font-size: 0.92rem;
-    }
+      .term-body {
+        padding: 1.4rem 1.6rem 1.6rem;
+        font-size: 0.92rem;
+      }
 
-    .term-line {
-      display: block;
-      opacity: 0;
-      animation: appear 0.06s ease forwards;
-    }
-    .term-line:nth-child(1)  { animation-delay: 0.3s; }
-    .term-line:nth-child(2)  { animation-delay: 0.7s; }
-    .term-line:nth-child(3)  { animation-delay: 1.1s; }
-    .term-line:nth-child(4)  { animation-delay: 1.3s; }
-    .term-line:nth-child(5)  { animation-delay: 1.5s; }
-    .term-line:nth-child(6)  { animation-delay: 1.7s; }
-    .term-line:nth-child(7)  { animation-delay: 1.9s; }
-    .term-line:nth-child(8)  { animation-delay: 2.3s; }
-    .term-line:nth-child(9)  { animation-delay: 2.5s; }
-    .term-line:nth-child(10) { animation-delay: 2.7s; }
-    .term-line:nth-child(11) { animation-delay: 2.9s; }
-    .term-line:nth-child(12) { animation-delay: 3.3s; }
+      .term-line {
+        display: block;
+        opacity: 0;
+        animation: appear 0.06s ease forwards;
+      }
+      .term-line:nth-child(1) {
+        animation-delay: 0.3s;
+      }
+      .term-line:nth-child(2) {
+        animation-delay: 0.7s;
+      }
+      .term-line:nth-child(3) {
+        animation-delay: 1.1s;
+      }
+      .term-line:nth-child(4) {
+        animation-delay: 1.3s;
+      }
+      .term-line:nth-child(5) {
+        animation-delay: 1.5s;
+      }
+      .term-line:nth-child(6) {
+        animation-delay: 1.7s;
+      }
+      .term-line:nth-child(7) {
+        animation-delay: 1.9s;
+      }
+      .term-line:nth-child(8) {
+        animation-delay: 2.3s;
+      }
+      .term-line:nth-child(9) {
+        animation-delay: 2.5s;
+      }
+      .term-line:nth-child(10) {
+        animation-delay: 2.7s;
+      }
+      .term-line:nth-child(11) {
+        animation-delay: 2.9s;
+      }
+      .term-line:nth-child(12) {
+        animation-delay: 3.3s;
+      }
 
-    @keyframes appear { to { opacity: 1; } }
+      @keyframes appear {
+        to {
+          opacity: 1;
+        }
+      }
 
-    .c-cmd   { color: var(--green); }
-    .c-ok    { color: var(--green-dim); }
-    .c-label { color: #cccccc; }
-    .c-count { color: var(--text-dim); }
-    .c-done  { color: var(--green); text-shadow: 0 0 10px rgba(0,255,65,0.4); }
-    .c-hint  { color: #ff9f0a; }
-    .c-dim   { color: var(--text-dim); }
-    .c-blank { color: transparent; user-select: none; }
+      .c-cmd {
+        color: var(--green);
+      }
+      .c-ok {
+        color: var(--green-dim);
+      }
+      .c-label {
+        color: #cccccc;
+      }
+      .c-count {
+        color: var(--text-dim);
+      }
+      .c-done {
+        color: var(--green);
+        text-shadow: 0 0 10px rgba(0, 255, 65, 0.4);
+      }
+      .c-hint {
+        color: #ff9f0a;
+      }
+      .c-dim {
+        color: var(--text-dim);
+      }
+      .c-blank {
+        color: transparent;
+        user-select: none;
+      }
 
-    /* ── install block ── */
-    .install-cmd {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1rem 1.4rem;
-      margin-bottom: 1rem;
-    }
-    .install-cmd code {
-      flex: 1;
-      font-family: var(--mono);
-      font-size: 1.05rem;
-      color: var(--green);
-    }
-    .copy-btn {
-      background: none;
-      border: 1px solid var(--green-faint);
-      color: var(--text-dim);
-      border-radius: 4px;
-      padding: 0.3rem 0.7rem;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .copy-btn:hover { border-color: var(--green-dim); color: var(--green-dim); }
-    .copy-btn.copied { border-color: var(--green); color: var(--green); }
+      /* ── install block ── */
+      .install-cmd {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 1rem 1.4rem;
+        margin-bottom: 1rem;
+      }
+      .install-cmd code {
+        flex: 1;
+        font-family: var(--mono);
+        font-size: 1.05rem;
+        color: var(--green);
+      }
+      .copy-btn {
+        background: none;
+        border: 1px solid var(--green-faint);
+        color: var(--text-dim);
+        border-radius: 4px;
+        padding: 0.3rem 0.7rem;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .copy-btn:hover {
+        border-color: var(--green-dim);
+        color: var(--green-dim);
+      }
+      .copy-btn.copied {
+        border-color: var(--green);
+        color: var(--green);
+      }
 
-    /* ── features grid ── */
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1rem;
-    }
-    .feature {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.1rem 1.2rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .feature:hover {
-      border-color: var(--green-dim);
-      box-shadow: 0 0 20px rgba(0,255,65,0.07);
-    }
-    .feature-icon { color: var(--green-dim); margin-bottom: 0.4rem; font-size: 1.1rem; }
-    .feature-title { color: #fff; font-weight: 600; margin-bottom: 0.2rem; font-size: 0.9rem; }
-    .feature-desc { color: var(--text-dim); font-size: 0.82rem; line-height: 1.5; }
+      /* ── features grid ── */
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 1rem;
+      }
+      .feature {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 1.1rem 1.2rem;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+      .feature:hover {
+        border-color: var(--green-dim);
+        box-shadow: 0 0 20px rgba(0, 255, 65, 0.07);
+      }
+      .feature-icon {
+        color: var(--green-dim);
+        margin-bottom: 0.4rem;
+        font-size: 1.1rem;
+      }
+      .feature-title {
+        color: #fff;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+        font-size: 0.9rem;
+      }
+      .feature-desc {
+        color: var(--text-dim);
+        font-size: 0.82rem;
+        line-height: 1.5;
+      }
 
-    /* ── options table ── */
-    .opts { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-    .opts td, .opts th {
-      padding: 0.5rem 0.8rem;
-      border-bottom: 1px solid rgba(0,255,65,0.07);
-      text-align: left;
-      vertical-align: top;
-    }
-    .opts th { color: var(--green-dim); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.08em; }
-    .opts td:first-child { color: var(--green); white-space: nowrap; }
-    .opts td:last-child { color: var(--text-dim); }
-    .opts tr:last-child td { border-bottom: none; }
+      /* ── options table ── */
+      .opts {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
+      .opts td,
+      .opts th {
+        padding: 0.5rem 0.8rem;
+        border-bottom: 1px solid rgba(0, 255, 65, 0.07);
+        text-align: left;
+        vertical-align: top;
+      }
+      .opts th {
+        color: var(--green-dim);
+        font-weight: 600;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+      }
+      .opts td:first-child {
+        color: var(--green);
+        white-space: nowrap;
+      }
+      .opts td:last-child {
+        color: var(--text-dim);
+      }
+      .opts tr:last-child td {
+        border-bottom: none;
+      }
 
-    /* ── API snippet ── */
-    pre {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.2rem 1.4rem;
-      overflow-x: auto;
-      font-size: 0.87rem;
-      line-height: 1.6;
-      color: var(--text);
-    }
-    pre .kw  { color: #c792ea; }
-    pre .fn  { color: #82aaff; }
-    pre .str { color: #c3e88d; }
-    pre .num { color: #f78c6c; }
-    pre .cm  { color: var(--text-dim); }
+      /* ── API snippet ── */
+      pre {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 1.2rem 1.4rem;
+        overflow-x: auto;
+        font-size: 0.87rem;
+        line-height: 1.6;
+        color: var(--text);
+      }
+      pre .kw {
+        color: #c792ea;
+      }
+      pre .fn {
+        color: #82aaff;
+      }
+      pre .str {
+        color: #c3e88d;
+      }
+      pre .num {
+        color: #f78c6c;
+      }
+      pre .cm {
+        color: var(--text-dim);
+      }
 
-    /* ── footer ── */
-    footer {
-      margin-top: 5rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--border);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.82rem;
-      color: var(--text-dim);
-    }
-    footer a { color: var(--green-dim); text-decoration: none; }
-    footer a:hover { color: var(--green); }
-    .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+      /* ── footer ── */
+      footer {
+        margin-top: 5rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.82rem;
+        color: var(--text-dim);
+      }
+      footer a {
+        color: var(--green-dim);
+        text-decoration: none;
+      }
+      footer a:hover {
+        color: var(--green);
+      }
+      .footer-links {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
 
-    /* ── utilities ── */
-    a { color: var(--green-dim); text-decoration: none; }
-    a:hover { color: var(--green); }
+      /* ── utilities ── */
+      a {
+        color: var(--green-dim);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--green);
+      }
 
-    @media (max-width: 600px) {
-      .site { padding: 3rem 1.2rem 3rem; }
-      .prompt { font-size: 2rem; }
-      .features { grid-template-columns: 1fr; }
-      footer { flex-direction: column; align-items: flex-start; }
-    }
-  </style>
-</head>
-<body>
+      @media (max-width: 600px) {
+        .site {
+          padding: 3rem 1.2rem 3rem;
+        }
+        .prompt {
+          font-size: 2rem;
+        }
+        .features {
+          grid-template-columns: 1fr;
+        }
+        footer {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="matrix"></canvas>
 
-<canvas id="matrix"></canvas>
+    <main class="site">
+      <!-- ── header ── -->
+      <header class="header">
+        <div class="prompt">&gt; cursorport<span class="cursor">_</span></div>
+        <p class="tagline">
+          migrate <strong>Cursor</strong> <span class="arrow">→</span> <strong>VS Code</strong> in
+          one command<br />
+          settings · keybindings · snippets · profiles · extensions
+        </p>
+        <div class="badges">
+          <a href="https://github.com/oleg-koval/cursorport/actions/workflows/ci.yml">
+            <img
+              src="https://github.com/oleg-koval/cursorport/actions/workflows/ci.yml/badge.svg"
+              alt="CI"
+            />
+          </a>
+          <a href="https://nodejs.org">
+            <img src="https://img.shields.io/badge/node-%3E%3D20-brightgreen" alt="Node.js ≥ 20" />
+          </a>
+          <a href="https://github.com/oleg-koval/cursorport/blob/main/LICENSE">
+            <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License" />
+          </a>
+        </div>
+      </header>
 
-<main class="site">
+      <!-- ── live demo terminal ── -->
+      <section>
+        <div class="section-label">live output</div>
+        <div class="terminal">
+          <div class="term-bar">cursorport — terminal</div>
+          <div class="term-body">
+            <span class="term-line c-cmd">$ npx cursorport</span>
+            <span class="term-line c-blank">&nbsp;</span>
+            <span class="term-line">
+              <span class="c-ok"> ✓</span>&nbsp;&nbsp;<span class="c-label">settings.json</span>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-count"
+                >cursor.* keys stripped</span
+              >
+            </span>
+            <span class="term-line">
+              <span class="c-ok"> ✓</span>&nbsp;&nbsp;<span class="c-label">keybindings.json</span>
+            </span>
+            <span class="term-line">
+              <span class="c-ok"> ✓</span>&nbsp;&nbsp;<span class="c-label">snippets/</span>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                class="c-count"
+                >(14 files)</span
+              >
+            </span>
+            <span class="term-line">
+              <span class="c-ok"> ✓</span>&nbsp;&nbsp;<span class="c-label">profiles/</span>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                class="c-count"
+                >(2 profiles)</span
+              >
+            </span>
+            <span class="term-line">
+              <span class="c-ok"> ✓</span>&nbsp;&nbsp;<span class="c-label">extensions</span>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                class="c-count"
+                >(38 installed)</span
+              >
+            </span>
+            <span class="term-line c-blank">&nbsp;</span>
+            <span class="term-line c-done"> Migration complete.</span>
+            <span class="term-line c-dim">
+              Backup saved: ~/.cursorport_backup_2025-05-05T10-00-00</span
+            >
+            <span class="term-line c-dim"> Restart VS Code to apply all changes.</span>
+            <span class="term-line c-blank">&nbsp;</span>
+            <span class="term-line">
+              <span class="c-hint"> !</span>&nbsp;&nbsp;<span class="c-dim"
+                >Font: Fira Code — make sure it&rsquo;s installed system-wide</span
+              >
+            </span>
+          </div>
+        </div>
+      </section>
 
-  <!-- ── header ── -->
-  <header class="header">
-    <div class="prompt">&gt; cursorport<span class="cursor">_</span></div>
-    <p class="tagline">
-      migrate <strong>Cursor</strong> <span class="arrow">→</span> <strong>VS Code</strong> in one command<br>
-      settings · keybindings · snippets · profiles · extensions
-    </p>
-    <div class="badges">
-      <a href="https://github.com/oleg-koval/cursorport/actions/workflows/ci.yml">
-        <img src="https://github.com/oleg-koval/cursorport/actions/workflows/ci.yml/badge.svg" alt="CI">
-      </a>
-      <a href="https://www.npmjs.com/package/cursorport">
-        <img src="https://img.shields.io/npm/v/cursorport.svg?colorB=00c020" alt="npm version">
-      </a>
-      <a href="https://www.npmjs.com/package/cursorport">
-        <img src="https://img.shields.io/npm/dm/cursorport.svg?colorB=00c020" alt="npm downloads">
-      </a>
-      <a href="https://github.com/oleg-koval/cursorport/blob/main/LICENSE">
-        <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License">
-      </a>
-    </div>
-  </header>
+      <!-- ── install ── -->
+      <section>
+        <div class="section-label">install</div>
+        <div class="install-cmd">
+          <code>$ npx cursorport</code>
+          <button class="copy-btn" data-copy="npx cursorport">copy</button>
+        </div>
+        <p style="color: var(--text-dim); font-size: 0.85rem">
+          No install needed — runs with <code style="color: var(--text)">npx</code>. Or:
+          <code style="color: var(--green-dim)">npm install -g cursorport</code> &nbsp;·&nbsp;
+          Requires <strong>Node.js ≥ 20</strong> and both
+          <code style="color: var(--text)">cursor</code> +
+          <code style="color: var(--text)">code</code> in your PATH.
+        </p>
+      </section>
 
-  <!-- ── live demo terminal ── -->
-  <section>
-    <div class="section-label">live output</div>
-    <div class="terminal">
-      <div class="term-bar">cursorport — terminal</div>
-      <div class="term-body">
-        <span class="term-line c-cmd">$ npx cursorport</span>
-        <span class="term-line c-blank">&nbsp;</span>
-        <span class="term-line">
-          <span class="c-ok">  ✓</span>&nbsp;&nbsp;<span class="c-label">settings.json</span>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-count">cursor.* keys stripped</span>
-        </span>
-        <span class="term-line">
-          <span class="c-ok">  ✓</span>&nbsp;&nbsp;<span class="c-label">keybindings.json</span>
-        </span>
-        <span class="term-line">
-          <span class="c-ok">  ✓</span>&nbsp;&nbsp;<span class="c-label">snippets/</span>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-count">(14 files)</span>
-        </span>
-        <span class="term-line">
-          <span class="c-ok">  ✓</span>&nbsp;&nbsp;<span class="c-label">profiles/</span>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-count">(2 profiles)</span>
-        </span>
-        <span class="term-line">
-          <span class="c-ok">  ✓</span>&nbsp;&nbsp;<span class="c-label">extensions</span>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-count">(38 installed)</span>
-        </span>
-        <span class="term-line c-blank">&nbsp;</span>
-        <span class="term-line c-done">  Migration complete.</span>
-        <span class="term-line c-dim">  Backup saved: ~/.cursorport_backup_2025-05-05T10-00-00</span>
-        <span class="term-line c-dim">  Restart VS Code to apply all changes.</span>
-        <span class="term-line c-blank">&nbsp;</span>
-        <span class="term-line">
-          <span class="c-hint">  !</span>&nbsp;&nbsp;<span class="c-dim">Font: Fira Code — make sure it&rsquo;s installed system-wide</span>
-        </span>
-      </div>
-    </div>
-  </section>
+      <!-- ── what gets migrated ── -->
+      <section>
+        <div class="section-label">what gets migrated</div>
+        <div class="features">
+          <div class="feature">
+            <div class="feature-icon">{ }</div>
+            <div class="feature-title">settings.json</div>
+            <div class="feature-desc">
+              Copied verbatim. <code>cursor.*</code> and <code>anysphere.*</code> keys stripped
+              automatically so VS Code doesn't error.
+            </div>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">⌨</div>
+            <div class="feature-title">keybindings.json</div>
+            <div class="feature-desc">All custom keyboard shortcuts copied as-is.</div>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">✂</div>
+            <div class="feature-title">snippets/</div>
+            <div class="feature-desc">
+              All per-language snippet files migrated. Existing VS Code snippets won't be
+              overwritten without confirmation.
+            </div>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">◈</div>
+            <div class="feature-title">profiles/</div>
+            <div class="feature-desc">
+              All named editor profiles. Great for monorepos and context-switching setups.
+            </div>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">⬡</div>
+            <div class="feature-title">extensions</div>
+            <div class="feature-desc">
+              Installs every extension that exists on the VS Code marketplace. Cursor-only
+              extensions (<code>anysphere.*</code>) are skipped automatically.
+            </div>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">!</div>
+            <div class="feature-title">font + theme hints</div>
+            <div class="feature-desc">
+              Detects your editor/terminal font and color theme. Warns if they need to be installed
+              in VS Code.
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <!-- ── install ── -->
-  <section>
-    <div class="section-label">install</div>
-    <div class="install-cmd">
-      <code>$ npx cursorport</code>
-      <button class="copy-btn" data-copy="npx cursorport">copy</button>
-    </div>
-    <p style="color:var(--text-dim);font-size:0.85rem">
-      No install needed — runs with <code style="color:var(--text)">npx</code>.
-      Or: <code style="color:var(--green-dim)">npm install -g cursorport</code>
-      &nbsp;·&nbsp; Requires <strong>Node.js ≥ 20</strong> and both
-      <code style="color:var(--text)">cursor</code> + <code style="color:var(--text)">code</code> in your PATH.
-    </p>
-  </section>
+      <!-- ── options ── -->
+      <section>
+        <div class="section-label">options</div>
+        <table class="opts">
+          <thead>
+            <tr>
+              <th>flag</th>
+              <th>description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>-n, --dry-run</td>
+              <td>Preview everything without writing any files</td>
+            </tr>
+            <tr>
+              <td>-f, --force</td>
+              <td>Overwrite VS Code files without prompting</td>
+            </tr>
+            <tr>
+              <td>--skip-extensions</td>
+              <td>Skip extension installation (fast settings-only run)</td>
+            </tr>
+            <tr>
+              <td>--only &lt;targets&gt;</td>
+              <td>
+                Comma-separated subset:
+                <code>settings,keybindings,snippets,profiles,extensions</code>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-  <!-- ── what gets migrated ── -->
-  <section>
-    <div class="section-label">what gets migrated</div>
-    <div class="features">
-      <div class="feature">
-        <div class="feature-icon">{ }</div>
-        <div class="feature-title">settings.json</div>
-        <div class="feature-desc">Copied verbatim. <code>cursor.*</code> and <code>anysphere.*</code> keys stripped automatically so VS Code doesn't error.</div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">⌨</div>
-        <div class="feature-title">keybindings.json</div>
-        <div class="feature-desc">All custom keyboard shortcuts copied as-is.</div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">✂</div>
-        <div class="feature-title">snippets/</div>
-        <div class="feature-desc">All per-language snippet files migrated. Existing VS Code snippets won't be overwritten without confirmation.</div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">◈</div>
-        <div class="feature-title">profiles/</div>
-        <div class="feature-desc">All named editor profiles. Great for monorepos and context-switching setups.</div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">⬡</div>
-        <div class="feature-title">extensions</div>
-        <div class="feature-desc">Installs every extension that exists on the VS Code marketplace. Cursor-only extensions (<code>anysphere.*</code>) are skipped automatically.</div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">!</div>
-        <div class="feature-title">font + theme hints</div>
-        <div class="feature-desc">Detects your editor/terminal font and color theme. Warns if they need to be installed in VS Code.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── options ── -->
-  <section>
-    <div class="section-label">options</div>
-    <table class="opts">
-      <thead><tr><th>flag</th><th>description</th></tr></thead>
-      <tbody>
-        <tr><td>-n, --dry-run</td><td>Preview everything without writing any files</td></tr>
-        <tr><td>-f, --force</td><td>Overwrite VS Code files without prompting</td></tr>
-        <tr><td>--skip-extensions</td><td>Skip extension installation (fast settings-only run)</td></tr>
-        <tr><td>--only &lt;targets&gt;</td><td>Comma-separated subset: <code>settings,keybindings,snippets,profiles,extensions</code></td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <!-- ── programmatic API ── -->
-  <section>
-    <div class="section-label">api</div>
-<pre><span class="kw">import</span> { <span class="fn">migrate</span>, <span class="fn">resolvePaths</span> } <span class="kw">from</span> <span class="str">'cursorport'</span>
+      <!-- ── programmatic API ── -->
+      <section>
+        <div class="section-label">api</div>
+        <pre><span class="kw">import</span> { <span class="fn">migrate</span>, <span class="fn">resolvePaths</span> } <span class="kw">from</span> <span class="str">'cursorport'</span>
 
 <span class="kw">const</span> paths = <span class="fn">resolvePaths</span>(<span class="str">'backup-label'</span>)
 <span class="kw">const</span> results = <span class="kw">await</span> <span class="fn">migrate</span>(paths, {
@@ -465,86 +678,86 @@
 <span class="kw">for</span> (<span class="kw">const</span> r <span class="kw">of</span> results) {
   console.<span class="fn">log</span>(r.target, r.status, r.count)
 }</pre>
-  </section>
+      </section>
 
-  <!-- ── platform support ── -->
-  <section>
-    <div class="section-label">platforms</div>
-    <p style="color:var(--text-dim);font-size:0.88rem">
-      <span style="color:var(--green-dim)">✓</span> macOS &nbsp;·&nbsp;
-      <span style="color:var(--green-dim)">✓</span> Linux &nbsp;·&nbsp;
-      <span style="color:var(--green-dim)">✓</span> Windows
-      &nbsp;&nbsp;—&nbsp;&nbsp;
-      User data and extension paths resolved per-OS automatically.
-    </p>
-  </section>
+      <!-- ── platform support ── -->
+      <section>
+        <div class="section-label">platforms</div>
+        <p style="color: var(--text-dim); font-size: 0.88rem">
+          <span style="color: var(--green-dim)">✓</span> macOS &nbsp;·&nbsp;
+          <span style="color: var(--green-dim)">✓</span> Linux &nbsp;·&nbsp;
+          <span style="color: var(--green-dim)">✓</span> Windows &nbsp;&nbsp;—&nbsp;&nbsp; User data
+          and extension paths resolved per-OS automatically.
+        </p>
+      </section>
 
-  <!-- ── footer ── -->
-  <footer>
-    <span>MIT © <a href="https://github.com/oleg-koval">Oleg Koval</a></span>
-    <div class="footer-links">
-      <a href="https://github.com/oleg-koval/cursorport">GitHub</a>
-      <a href="https://www.npmjs.com/package/cursorport">npm</a>
-      <a href="https://github.com/oleg-koval/cursorport/issues">Issues</a>
-      <a href="https://github.com/oleg-koval/cursorport/releases">Releases</a>
-      <a href="https://www.buymeacoffee.com/olko">☕ Buy me a coffee</a>
-    </div>
-  </footer>
+      <!-- ── footer ── -->
+      <footer>
+        <span>MIT © <a href="https://github.com/oleg-koval">Oleg Koval</a></span>
+        <div class="footer-links">
+          <a href="https://github.com/oleg-koval/cursorport">GitHub</a>
+          <a href="https://www.npmjs.com/package/cursorport">npm</a>
+          <a href="https://github.com/oleg-koval/cursorport/issues">Issues</a>
+          <a href="https://github.com/oleg-koval/cursorport/releases">Releases</a>
+          <a href="https://www.buymeacoffee.com/olko">☕ Buy me a coffee</a>
+        </div>
+      </footer>
+    </main>
 
-</main>
+    <script>
+      // ── matrix rain ──────────────────────────────────────────────────────────
+      const canvas = document.getElementById('matrix')
+      const ctx = canvas.getContext('2d')
+      const CHARS = 'アイウエカキクケコサシスセソタチツ0123456789ABCDEF><|{}[]()=+/\\'.split('')
+      const COL_W = 18
 
-<script>
-  // ── matrix rain ──────────────────────────────────────────────────────────
-  const canvas = document.getElementById('matrix')
-  const ctx = canvas.getContext('2d')
-  const CHARS = 'アイウエカキクケコサシスセソタチツ0123456789ABCDEF><|{}[]()=+/\\'.split('')
-  const COL_W = 18
+      let cols, drops
 
-  let cols, drops
+      function resize() {
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+        cols = Math.floor(canvas.width / COL_W)
+        drops = Array.from({ length: cols }, () => Math.random() * -50)
+      }
 
-  function resize() {
-    canvas.width  = window.innerWidth
-    canvas.height = window.innerHeight
-    cols  = Math.floor(canvas.width / COL_W)
-    drops = Array.from({ length: cols }, () => Math.random() * -50)
-  }
+      function drawMatrix() {
+        ctx.fillStyle = 'rgba(0,0,0,0.055)'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.font = `14px monospace`
 
-  function drawMatrix() {
-    ctx.fillStyle = 'rgba(0,0,0,0.055)'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-    ctx.font = `14px monospace`
+        for (let i = 0; i < cols; i++) {
+          const ch = CHARS[Math.floor(Math.random() * CHARS.length)]
+          const x = i * COL_W
+          const y = drops[i] * COL_W
 
-    for (let i = 0; i < cols; i++) {
-      const ch = CHARS[Math.floor(Math.random() * CHARS.length)]
-      const x  = i * COL_W
-      const y  = drops[i] * COL_W
+          // bright head character
+          ctx.fillStyle = `rgba(0,255,65,${0.85 + Math.random() * 0.15})`
+          ctx.fillText(ch, x, y)
 
-      // bright head character
-      ctx.fillStyle = `rgba(0,255,65,${0.85 + Math.random() * 0.15})`
-      ctx.fillText(ch, x, y)
+          // dim trail already handled by the fade rect above
+          if (y > canvas.height && Math.random() > 0.975) drops[i] = 0
+          drops[i] += 1
+        }
+      }
 
-      // dim trail already handled by the fade rect above
-      if (y > canvas.height && Math.random() > 0.975) drops[i] = 0
-      drops[i] += 1
-    }
-  }
+      resize()
+      window.addEventListener('resize', resize)
+      setInterval(drawMatrix, 55)
 
-  resize()
-  window.addEventListener('resize', resize)
-  setInterval(drawMatrix, 55)
-
-  // ── copy button ──────────────────────────────────────────────────────────
-  document.querySelectorAll('.copy-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const text = btn.dataset.copy
-      navigator.clipboard.writeText(text).then(() => {
-        btn.textContent = 'copied!'
-        btn.classList.add('copied')
-        setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied') }, 1800)
+      // ── copy button ──────────────────────────────────────────────────────────
+      document.querySelectorAll('.copy-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const text = btn.dataset.copy
+          navigator.clipboard.writeText(text).then(() => {
+            btn.textContent = 'copied!'
+            btn.classList.add('copied')
+            setTimeout(() => {
+              btn.textContent = 'copy'
+              btn.classList.remove('copied')
+            }, 1800)
+          })
+        })
       })
-    })
-  })
-</script>
-
-</body>
+    </script>
+  </body>
 </html>

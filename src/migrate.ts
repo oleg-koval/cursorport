@@ -9,7 +9,14 @@ import {
 } from 'node:fs'
 import { join } from 'node:path'
 import { execFileSync } from 'node:child_process'
-import type { MigrationOptions, MigrationResult, MigrationTarget, Paths, ThemeInfo, FontInfo } from './types.js'
+import type {
+  MigrationOptions,
+  MigrationResult,
+  MigrationTarget,
+  Paths,
+  ThemeInfo,
+  FontInfo,
+} from './types.js'
 
 // Cursor-specific extension IDs that don't exist on the VS Code marketplace
 const CURSOR_ONLY_EXTENSIONS = new Set([
@@ -30,9 +37,7 @@ function isCursorOnlyKey(key: string): boolean {
 
 function stripCursorKeys(raw: string): string {
   const parsed: Record<string, unknown> = JSON.parse(raw) as Record<string, unknown>
-  const cleaned = Object.fromEntries(
-    Object.entries(parsed).filter(([k]) => !isCursorOnlyKey(k)),
-  )
+  const cleaned = Object.fromEntries(Object.entries(parsed).filter(([k]) => !isCursorOnlyKey(k)))
   return JSON.stringify(cleaned, null, 2)
 }
 
@@ -68,7 +73,11 @@ export function migrateKeybindings(paths: Paths, opts: MigrationOptions): Migrat
   const src = join(paths.cursorUser, 'keybindings.json')
   const dst = join(paths.vscodeUser, 'keybindings.json')
   if (!existsSync(src)) {
-    return { target: 'keybindings', status: 'skipped', message: 'keybindings.json not found in Cursor' }
+    return {
+      target: 'keybindings',
+      status: 'skipped',
+      message: 'keybindings.json not found in Cursor',
+    }
   }
   if (opts.dryRun) return { target: 'keybindings', status: 'ok', message: 'dry run' }
   copyFileSync(src, dst)
@@ -82,7 +91,8 @@ export function migrateSnippets(paths: Paths, opts: MigrationOptions): Migration
     return { target: 'snippets', status: 'skipped', message: 'No snippets directory in Cursor' }
   }
   const files = readdirSync(src)
-  if (opts.dryRun) return { target: 'snippets', status: 'ok', count: files.length, message: 'dry run' }
+  if (opts.dryRun)
+    return { target: 'snippets', status: 'ok', count: files.length, message: 'dry run' }
   mkdirSync(dst, { recursive: true })
   for (const f of files) {
     copyFileSync(join(src, f), join(dst, f))
@@ -100,7 +110,8 @@ export function migrateProfiles(paths: Paths, opts: MigrationOptions): Migration
   if (entries.length === 0) {
     return { target: 'profiles', status: 'skipped', message: 'No profiles to migrate' }
   }
-  if (opts.dryRun) return { target: 'profiles', status: 'ok', count: entries.length, message: 'dry run' }
+  if (opts.dryRun)
+    return { target: 'profiles', status: 'ok', count: entries.length, message: 'dry run' }
   cpSync(src, dst, { recursive: true })
   return { target: 'profiles', status: 'ok', count: entries.length }
 }
@@ -125,17 +136,13 @@ export function migrateExtensions(paths: Paths, opts: MigrationOptions): Migrati
       .split('\n')
       .filter(Boolean)
     vscodeExts = new Set(
-      execFileSync('code', ['--list-extensions'], { encoding: 'utf8' })
-        .split('\n')
-        .filter(Boolean),
+      execFileSync('code', ['--list-extensions'], { encoding: 'utf8' }).split('\n').filter(Boolean),
     )
   } catch (e) {
     return { target: 'extensions', status: 'failed', message: `CLI error: ${String(e)}` }
   }
 
-  const missing = cursorExts.filter(
-    (e) => !CURSOR_ONLY_EXTENSIONS.has(e) && !vscodeExts.has(e),
-  )
+  const missing = cursorExts.filter((e) => !CURSOR_ONLY_EXTENSIONS.has(e) && !vscodeExts.has(e))
 
   const failures: string[] = []
   for (const ext of missing) {
@@ -146,20 +153,21 @@ export function migrateExtensions(paths: Paths, opts: MigrationOptions): Migrati
     }
   }
 
-  const status = failures.length === 0 ? 'ok' : missing.length === failures.length ? 'failed' : 'partial'
+  const status =
+    failures.length === 0 ? 'ok' : missing.length === failures.length ? 'failed' : 'partial'
   return {
     target: 'extensions',
     status,
     count: missing.length - failures.length,
-    failures: failures.length > 0 ? failures : undefined,
+    ...(failures.length > 0 ? { failures } : {}),
   }
 }
 
-export async function migrate(
+export function migrate(
   paths: Paths,
   opts: MigrationOptions,
   onProgress?: (result: MigrationResult) => void,
-): Promise<MigrationResult[]> {
+): MigrationResult[] {
   backup(paths, opts.dryRun)
 
   const targets: MigrationTarget[] = opts.only ?? [
@@ -196,10 +204,11 @@ export async function migrate(
 export function readFontInfo(settingsPath: string): FontInfo {
   try {
     const s = JSON.parse(readFileSync(settingsPath, 'utf8')) as Record<string, unknown>
-    return {
-      editor: typeof s['editor.fontFamily'] === 'string' ? s['editor.fontFamily'] : undefined,
-      terminal: typeof s['terminal.integrated.fontFamily'] === 'string' ? s['terminal.integrated.fontFamily'] : undefined,
-    }
+    const info: FontInfo = {}
+    if (typeof s['editor.fontFamily'] === 'string') info.editor = s['editor.fontFamily']
+    if (typeof s['terminal.integrated.fontFamily'] === 'string')
+      info.terminal = s['terminal.integrated.fontFamily']
+    return info
   } catch {
     return {}
   }
@@ -208,10 +217,10 @@ export function readFontInfo(settingsPath: string): FontInfo {
 export function readThemeInfo(settingsPath: string): ThemeInfo {
   try {
     const s = JSON.parse(readFileSync(settingsPath, 'utf8')) as Record<string, unknown>
-    return {
-      colorTheme: typeof s['workbench.colorTheme'] === 'string' ? s['workbench.colorTheme'] : undefined,
-      iconTheme: typeof s['workbench.iconTheme'] === 'string' ? s['workbench.iconTheme'] : undefined,
-    }
+    const info: ThemeInfo = {}
+    if (typeof s['workbench.colorTheme'] === 'string') info.colorTheme = s['workbench.colorTheme']
+    if (typeof s['workbench.iconTheme'] === 'string') info.iconTheme = s['workbench.iconTheme']
+    return info
   } catch {
     return {}
   }

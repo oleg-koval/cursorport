@@ -45,13 +45,19 @@ describe('migrateSettings', () => {
 
   it('strips cursor.* and anysphere.* keys', () => {
     const src = join(paths.cursorUser, 'settings.json')
-    writeFileSync(src, JSON.stringify({
-      'editor.fontSize': 14,
-      'cursor.foo': 'bar',
-      'anysphere.baz': true,
-    }))
+    writeFileSync(
+      src,
+      JSON.stringify({
+        'editor.fontSize': 14,
+        'cursor.foo': 'bar',
+        'anysphere.baz': true,
+      }),
+    )
     migrateSettings(paths, LIVE)
-    const out = JSON.parse(readFileSync(join(paths.vscodeUser, 'settings.json'), 'utf8')) as Record<string, unknown>
+    const out = JSON.parse(readFileSync(join(paths.vscodeUser, 'settings.json'), 'utf8')) as Record<
+      string,
+      unknown
+    >
     expect(out['editor.fontSize']).toBe(14)
     expect(out['cursor.foo']).toBeUndefined()
     expect(out['anysphere.baz']).toBeUndefined()
@@ -152,11 +158,14 @@ describe('readFontInfo / readThemeInfo', () => {
 
   it('extracts font and theme from settings', () => {
     const p = join(tmp, 'settings.json')
-    writeFileSync(p, JSON.stringify({
-      'editor.fontFamily': "'Fira Code', monospace",
-      'workbench.colorTheme': 'GitHub Dark Dimmed',
-      'workbench.iconTheme': 'material-icon-theme',
-    }))
+    writeFileSync(
+      p,
+      JSON.stringify({
+        'editor.fontFamily': "'Fira Code', monospace",
+        'workbench.colorTheme': 'GitHub Dark Dimmed',
+        'workbench.iconTheme': 'material-icon-theme',
+      }),
+    )
     const fonts = readFontInfo(p)
     const theme = readThemeInfo(p)
     expect(fonts.editor).toContain('Fira Code')
