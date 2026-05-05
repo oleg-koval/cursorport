@@ -1,0 +1,59 @@
+{
+  "name": "cursorport",
+  "version": "0.0.0",
+  "description": "Migrate everything from Cursor to VS Code — settings, keybindings, snippets, extensions, themes, fonts",
+  "keywords": ["cursor", "vscode", "migration", "settings", "extensions", "developer-tools"],
+  "author": "Oleg Koval <oleg.koval@teifi.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oleg-koval/cursorport.git"
+  },
+  "bugs": {
+    "url": "https://github.com/oleg-koval/cursorport/issues"
+  },
+  "homepage": "https://github.com/oleg-koval/cursorport#readme",
+  "type": "module",
+  "bin": {
+    "cursorport": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "ci": "npm run typecheck && npm run lint && npm run test"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^2.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^2.0.0"
+  },
+  "dependencies": {
+    "chalk": "^5.0.0",
+    "ora": "^8.0.0",
+    "commander": "^12.0.0",
+    "inquirer": "^12.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
