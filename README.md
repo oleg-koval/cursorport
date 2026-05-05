@@ -1,10 +1,23 @@
-# cursorport
+<p align="center">
+  <a href="https://github.com/oleg-koval/cursorport/actions/workflows/ci.yml"><img src="https://github.com/oleg-koval/cursorport/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://coveralls.io/github/oleg-koval/cursorport"><img src="https://coveralls.io/repos/github/oleg-koval/cursorport/badge.svg?branch=main" alt="Coverage"></a>
+  <a href="https://www.npmjs.com/package/cursorport"><img src="https://img.shields.io/npm/v/cursorport.svg?colorB=00c020" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/cursorport"><img src="https://img.shields.io/npm/dm/cursorport.svg?colorB=00c020" alt="npm downloads"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a>
+</p>
 
-> Migrate everything from **Cursor** to **VS Code** — settings, keybindings, snippets, profiles, and extensions — in one command.
+<p align="center">
+  <img src="./logo.svg" width="120" height="120" alt="cursorport icon">
+</p>
 
-[![CI](https://github.com/oleg-koval/cursorport/actions/workflows/ci.yml/badge.svg)](https://github.com/oleg-koval/cursorport/actions/workflows/ci.yml)
-[![npm version](https://img.shields.io/npm/v/cursorport.svg)](https://www.npmjs.com/package/cursorport)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+<h1 align="center">cursorport</h1>
+
+<p align="center">
+  Migrate everything from <strong>Cursor</strong> to <strong>VS Code</strong> in one command<br>
+  settings · keybindings · snippets · profiles · extensions
+</p>
+
+---
 
 ```
   cursorport — migrate Cursor → VS Code
@@ -134,6 +147,20 @@ for (const r of results) {
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Conventional commits drive automated releases via semantic-release.
 
+## Support
+
+If cursorport saved you time, [buy me a coffee ☕](https://www.buymeacoffee.com/olko)
+
 ## License
 
 [MIT](LICENSE) © [Oleg Koval](https://github.com/oleg-koval)
+
+---
+
+<p align="center">
+  <a href="https://github.com/oleg-koval/cursorport">GitHub</a> ·
+  <a href="https://www.npmjs.com/package/cursorport">npm</a> ·
+  <a href="https://github.com/oleg-koval/cursorport/issues">Issues</a> ·
+  <a href="https://github.com/oleg-koval/cursorport/releases">Releases</a> ·
+  <a href="https://oleg-koval.github.io/cursorport/">Website</a>
+</p>

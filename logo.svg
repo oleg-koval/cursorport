@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="cp-title cp-desc">
+  <title id="cp-title">cursorport</title>
+  <desc id="cp-desc">Text cursor and right-pointing arrow on dark terminal tile, representing migration</desc>
+  <defs>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- background tile -->
+  <rect width="512" height="512" rx="96" fill="#0d1117"/>
+  <rect x="40" y="40" width="432" height="432" rx="80" fill="#060d06"/>
+  <!-- subtle grid dots -->
+  <rect x="40" y="40" width="432" height="432" rx="80" fill="none" stroke="#0f2010" stroke-width="1"/>
+  <!-- text cursor (blinking bar) -->
+  <rect x="106" y="164" width="44" height="184" rx="8" fill="#00ff41" filter="url(#glow)"/>
+  <!-- migration arrow: shaft + head as single path -->
+  <path d="M 178,230 L 318,230 L 318,174 L 420,256 L 318,338 L 318,282 L 178,282 Z"
+        fill="#00ff41" filter="url(#glow)"/>
+</svg>

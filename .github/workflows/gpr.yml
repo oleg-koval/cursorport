@@ -1,0 +1,33 @@
+name: Publish to GitHub Packages
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-gpr:
+    name: GitHub Package Registry
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@oleg-koval'
+
+      - run: npm ci
+      - run: npm run build
+
+      # publish as @oleg-koval/cursorport to GitHub Packages
+      - run: npm pkg set name='@oleg-koval/cursorport'
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
