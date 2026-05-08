@@ -6,7 +6,11 @@ export default tseslint.config(
   ...tseslint.configs.strictTypeChecked,
   {
     languageOptions: {
-      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname, allowDefaultProject: true },
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+        allowDefaultProject: true,
+      },
     },
   },
   { ignores: ['dist/**', 'coverage/**', '*.config.*'] },
