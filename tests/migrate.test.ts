@@ -30,13 +30,15 @@ describe('migrateSettings', () => {
   let paths: Paths
 
   beforeEach(() => {
-    tmp = join(tmpdir(), `cursorport-test-${Date.now()}`)
+    tmp = join(tmpdir(), `cursorport-test-${String(Date.now())}`)
     paths = makePaths(tmp)
     mkdirSync(paths.cursorUser, { recursive: true })
     mkdirSync(paths.vscodeUser, { recursive: true })
   })
 
-  afterEach(() => rmSync(tmp, { recursive: true, force: true }))
+  afterEach(() => {
+    rmSync(tmp, { recursive: true, force: true })
+  })
 
   it('returns skipped when settings.json absent', () => {
     const r = migrateSettings(paths, LIVE)
@@ -75,13 +77,15 @@ describe('migrateKeybindings', () => {
   let paths: Paths
 
   beforeEach(() => {
-    tmp = join(tmpdir(), `cursorport-test-${Date.now()}`)
+    tmp = join(tmpdir(), `cursorport-test-${String(Date.now())}`)
     paths = makePaths(tmp)
     mkdirSync(paths.cursorUser, { recursive: true })
     mkdirSync(paths.vscodeUser, { recursive: true })
   })
 
-  afterEach(() => rmSync(tmp, { recursive: true, force: true }))
+  afterEach(() => {
+    rmSync(tmp, { recursive: true, force: true })
+  })
 
   it('copies keybindings.json', () => {
     writeFileSync(join(paths.cursorUser, 'keybindings.json'), '[{"key":"ctrl+k"}]')
@@ -102,13 +106,15 @@ describe('migrateSnippets', () => {
   let paths: Paths
 
   beforeEach(() => {
-    tmp = join(tmpdir(), `cursorport-test-${Date.now()}`)
+    tmp = join(tmpdir(), `cursorport-test-${String(Date.now())}`)
     paths = makePaths(tmp)
     mkdirSync(paths.cursorUser, { recursive: true })
     mkdirSync(paths.vscodeUser, { recursive: true })
   })
 
-  afterEach(() => rmSync(tmp, { recursive: true, force: true }))
+  afterEach(() => {
+    rmSync(tmp, { recursive: true, force: true })
+  })
 
   it('copies all snippet files', () => {
     mkdirSync(join(paths.cursorUser, 'snippets'))
@@ -132,13 +138,15 @@ describe('migrateProfiles', () => {
   let paths: Paths
 
   beforeEach(() => {
-    tmp = join(tmpdir(), `cursorport-test-${Date.now()}`)
+    tmp = join(tmpdir(), `cursorport-test-${String(Date.now())}`)
     paths = makePaths(tmp)
     mkdirSync(paths.cursorUser, { recursive: true })
     mkdirSync(paths.vscodeUser, { recursive: true })
   })
 
-  afterEach(() => rmSync(tmp, { recursive: true, force: true }))
+  afterEach(() => {
+    rmSync(tmp, { recursive: true, force: true })
+  })
 
   it('skipped when no profiles dir', () => {
     const r = migrateProfiles(paths, LIVE)
@@ -150,11 +158,13 @@ describe('readFontInfo / readThemeInfo', () => {
   let tmp: string
 
   beforeEach(() => {
-    tmp = join(tmpdir(), `cursorport-test-${Date.now()}`)
+    tmp = join(tmpdir(), `cursorport-test-${String(Date.now())}`)
     mkdirSync(tmp, { recursive: true })
   })
 
-  afterEach(() => rmSync(tmp, { recursive: true, force: true }))
+  afterEach(() => {
+    rmSync(tmp, { recursive: true, force: true })
+  })
 
   it('extracts font and theme from settings', () => {
     const p = join(tmp, 'settings.json')
