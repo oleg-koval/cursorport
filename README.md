@@ -11,8 +11,8 @@
 <h1 align="center">cursorport</h1>
 
 <p align="center">
-  Migrate everything from <strong>Cursor</strong> to <strong>VS Code</strong> in one command<br>
-  settings · keybindings · snippets · profiles · extensions
+  <strong>Migrate everything from Cursor to VS Code in one command</strong><br>
+  Copy all settings, keybindings, snippets, profiles, extensions, themes, and fonts
 </p>
 
 ---
@@ -37,30 +37,62 @@
 
 ## Install & run
 
-No install needed:
+### One-command migration (no install)
 
 ```bash
 npx cursorport
 ```
 
-Or install globally:
+### Or install globally for repeated use
 
 ```bash
 npm install -g cursorport
 cursorport
 ```
 
+## Step-by-step guide
+
+**Before migrating:**
+1. Install the CLIs (instructions below)
+2. Back up your VS Code settings (cursorport does this automatically, but keep your own copy too)
+3. Close VS Code while migrating to avoid write conflicts
+
+**Migrate your settings:**
+1. Run `npx cursorport` or `cursorport` (if installed globally)
+2. Follow the prompts — cursorport asks before overwriting existing VS Code files
+3. Restart VS Code to apply all changes
+
+**Verify the migration:**
+1. Check your settings: VS Code → Settings → search for your Cursor preferences
+2. Test keybindings: VS Code → Keyboard Shortcuts
+3. Verify extensions: VS Code → Extensions → search for migrated extensions
+4. Confirm fonts and themes are installed: Editor font and workbench theme
+
+**Options for advanced use:**
+- Preview changes without applying: `npx cursorport --dry-run`
+- Migrate only specific items: `npx cursorport --only settings,keybindings`
+- Overwrite without prompting: `npx cursorport --force`
+- Skip extension installation: `npx cursorport --skip-extensions`
+
+### Install the CLIs
+
+**Cursor:** Open Cursor → Command Palette → `Shell Command: Install 'cursor' command in PATH`
+
+**VS Code:** Open VS Code → Command Palette → `Shell Command: Install 'code' command in PATH`
+
 ## What gets migrated
+
+Complete migration of your Cursor configuration to VS Code:
 
 | What                 | Detail                                                                                                         |
 | -------------------- | -------------------------------------------------------------------------------------------------------------- |
-| **settings.json**    | Copied verbatim; `cursor.*` and `anysphere.*` keys stripped so VS Code doesn't error                           |
-| **keybindings.json** | Direct copy                                                                                                    |
-| **snippets/**        | All language snippets                                                                                          |
-| **profiles/**        | All named profiles                                                                                             |
-| **extensions**       | `cursor --list-extensions` → `code --install-extension` for each; Cursor-only extensions skipped automatically |
-| **font hints**       | Detects your editor and terminal font and warns if not installed system-wide                                   |
-| **theme hints**      | Detects color/icon theme and warns if the extension isn't in VS Code                                           |
+| **settings.json**    | All editor preferences, window settings, and configuration; `cursor.*` and `anysphere.*` keys stripped        |
+| **keybindings.json** | All keyboard shortcuts and custom key bindings                                                                 |
+| **snippets/**        | All code snippets across all programming languages                                                             |
+| **profiles/**        | All named profiles and workspace configurations                                                                |
+| **extensions**       | Installs all extensions; automatically skips Cursor-exclusive extensions                                       |
+| **fonts**            | Detects editor font family and terminal font; warns if not installed system-wide                               |
+| **themes**           | Detects color theme and icon theme; warns if not available in VS Code marketplace                             |
 
 Cursor-only extensions that are skipped (not on the VS Code marketplace):
 
@@ -110,13 +142,7 @@ npx cursorport --skip-extensions
 | Linux    | ✓         |
 | Windows  | ✓         |
 
-Requires Node.js ≥ 20 and both the `cursor` and `code` CLI commands in your `$PATH`.
-
-### Install the CLIs
-
-**Cursor:** Open Cursor → Command Palette → `Shell Command: Install 'cursor' command in PATH`
-
-**VS Code:** Open VS Code → Command Palette → `Shell Command: Install 'code' command in PATH`
+Requires Node.js ≥ 20 and both the `cursor` and `code` CLI commands in your `$PATH`. (See step-by-step guide above for CLI installation.)
 
 ## Programmatic API
 
