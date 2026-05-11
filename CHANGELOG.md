@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/oleg-koval/cursorport/compare/v1.1.0...v1.1.1) (2026-05-11)
+
+
+### Bug Fixes
+
+* eslint parser configuration for typescript-eslint ([e61396a](https://github.com/oleg-koval/cursorport/commit/e61396a8bce93cda75a143c34250b409534838d8))
+
 # [1.1.0](https://github.com/oleg-koval/cursorport/compare/v1.0.0...v1.1.0) (2026-05-11)
 
 
