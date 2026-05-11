@@ -3,14 +3,14 @@ import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
   eslint.configs.recommended,
-  ...tseslint.configs.strictTypeChecked,
+  ...tseslint.configs.strict,
   {
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        project: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },
   },
-  { ignores: ['dist/**', 'coverage/**', '*.config.*'] },
+  { ignores: ['dist/**', 'coverage/**', '*.config.*', 'node_modules/**'] },
 )
