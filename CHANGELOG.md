@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/oleg-koval/cursorport/compare/v1.0.0...v1.1.0) (2026-05-11)
+
+
+### Features
+
+* add --backup flag to cursorport ([b87d624](https://github.com/oleg-koval/cursorport/commit/b87d624fa33d9c8056342408d37d1abb76ab8022))
+
 # 1.0.0 (2026-05-08)
 
 
