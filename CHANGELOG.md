@@ -1,34 +1,30 @@
 ## [1.1.1](https://github.com/oleg-koval/cursorport/compare/v1.1.0...v1.1.1) (2026-05-11)
 
-
 ### Bug Fixes
 
-* eslint parser configuration for typescript-eslint ([e61396a](https://github.com/oleg-koval/cursorport/commit/e61396a8bce93cda75a143c34250b409534838d8))
+- eslint parser configuration for typescript-eslint ([e61396a](https://github.com/oleg-koval/cursorport/commit/e61396a8bce93cda75a143c34250b409534838d8))
 
 # [1.1.0](https://github.com/oleg-koval/cursorport/compare/v1.0.0...v1.1.0) (2026-05-11)
 
-
 ### Features
 
-* add --backup flag to cursorport ([b87d624](https://github.com/oleg-koval/cursorport/commit/b87d624fa33d9c8056342408d37d1abb76ab8022))
+- add --backup flag to cursorport ([b87d624](https://github.com/oleg-koval/cursorport/commit/b87d624fa33d9c8056342408d37d1abb76ab8022))
 
 # 1.0.0 (2026-05-08)
 
-
 ### Bug Fixes
 
-* allow ESLint to fallback to default project for test files not in tsconfig ([e29133c](https://github.com/oleg-koval/cursorport/commit/e29133c02e68a3bed6cc7589d0210bddabdd2160))
-* convert Date.now() to string and add braces to void-returning arrow functions ([c2f4148](https://github.com/oleg-koval/cursorport/commit/c2f41486c5eaf82d0330604b0031f578e44ec516))
-* include tests in tsconfig.json for ESLint type checking ([9367f90](https://github.com/oleg-koval/cursorport/commit/9367f90977277be8a30e7bbffc835df67d2d3789))
-* remove rootDir from tsconfig.json ([95f7f1e](https://github.com/oleg-koval/cursorport/commit/95f7f1ea5f058404966cbec4c57aad2d690a0b00))
-* resolve all CI failures ([d304b18](https://github.com/oleg-koval/cursorport/commit/d304b1881491d83eae620f8a15fb612221ef26f3))
-* resolve CI, Pages, and Release pipeline failures ([7c6f368](https://github.com/oleg-koval/cursorport/commit/7c6f36850dc0b7f89fa0e79cc9387ef89960441d))
-
+- allow ESLint to fallback to default project for test files not in tsconfig ([e29133c](https://github.com/oleg-koval/cursorport/commit/e29133c02e68a3bed6cc7589d0210bddabdd2160))
+- convert Date.now() to string and add braces to void-returning arrow functions ([c2f4148](https://github.com/oleg-koval/cursorport/commit/c2f41486c5eaf82d0330604b0031f578e44ec516))
+- include tests in tsconfig.json for ESLint type checking ([9367f90](https://github.com/oleg-koval/cursorport/commit/9367f90977277be8a30e7bbffc835df67d2d3789))
+- remove rootDir from tsconfig.json ([95f7f1e](https://github.com/oleg-koval/cursorport/commit/95f7f1ea5f058404966cbec4c57aad2d690a0b00))
+- resolve all CI failures ([d304b18](https://github.com/oleg-koval/cursorport/commit/d304b1881491d83eae620f8a15fb612221ef26f3))
+- resolve CI, Pages, and Release pipeline failures ([7c6f368](https://github.com/oleg-koval/cursorport/commit/7c6f36850dc0b7f89fa0e79cc9387ef89960441d))
 
 ### Features
 
-* initial release — Cursor to VS Code migration tool ([4d69258](https://github.com/oleg-koval/cursorport/commit/4d69258822af747964be0c9e202dff3f32a8146a))
-* oss publish readiness — icon, social card, Pages site, CI hardening ([4345a52](https://github.com/oleg-koval/cursorport/commit/4345a526ba82769f1f205615015ac286e07eb670))
+- initial release — Cursor to VS Code migration tool ([4d69258](https://github.com/oleg-koval/cursorport/commit/4d69258822af747964be0c9e202dff3f32a8146a))
+- oss publish readiness — icon, social card, Pages site, CI hardening ([4345a52](https://github.com/oleg-koval/cursorport/commit/4345a526ba82769f1f205615015ac286e07eb670))
 
 # Changelog
 

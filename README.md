@@ -53,22 +53,26 @@ cursorport
 ## Step-by-step guide
 
 **Before migrating:**
+
 1. Install the CLIs (instructions below)
 2. Back up your VS Code settings (cursorport does this automatically, but keep your own copy too)
 3. Close VS Code while migrating to avoid write conflicts
 
 **Migrate your settings:**
+
 1. Run `npx cursorport` or `cursorport` (if installed globally)
 2. Follow the prompts — cursorport asks before overwriting existing VS Code files
 3. Restart VS Code to apply all changes
 
 **Verify the migration:**
+
 1. Check your settings: VS Code → Settings → search for your Cursor preferences
 2. Test keybindings: VS Code → Keyboard Shortcuts
 3. Verify extensions: VS Code → Extensions → search for migrated extensions
 4. Confirm fonts and themes are installed: Editor font and workbench theme
 
 **Options for advanced use:**
+
 - Preview changes without applying: `npx cursorport --dry-run`
 - Migrate only specific items: `npx cursorport --only settings,keybindings`
 - Overwrite without prompting: `npx cursorport --force`
@@ -84,15 +88,15 @@ cursorport
 
 Complete migration of your Cursor configuration to VS Code:
 
-| What                 | Detail                                                                                                         |
-| -------------------- | -------------------------------------------------------------------------------------------------------------- |
-| **settings.json**    | All editor preferences, window settings, and configuration; `cursor.*` and `anysphere.*` keys stripped        |
-| **keybindings.json** | All keyboard shortcuts and custom key bindings                                                                 |
-| **snippets/**        | All code snippets across all programming languages                                                             |
-| **profiles/**        | All named profiles and workspace configurations                                                                |
-| **extensions**       | Installs all extensions; automatically skips Cursor-exclusive extensions                                       |
-| **fonts**            | Detects editor font family and terminal font; warns if not installed system-wide                               |
-| **themes**           | Detects color theme and icon theme; warns if not available in VS Code marketplace                             |
+| What                 | Detail                                                                                                 |
+| -------------------- | ------------------------------------------------------------------------------------------------------ |
+| **settings.json**    | All editor preferences, window settings, and configuration; `cursor.*` and `anysphere.*` keys stripped |
+| **keybindings.json** | All keyboard shortcuts and custom key bindings                                                         |
+| **snippets/**        | All code snippets across all programming languages                                                     |
+| **profiles/**        | All named profiles and workspace configurations                                                        |
+| **extensions**       | Installs all extensions; automatically skips Cursor-exclusive extensions                               |
+| **fonts**            | Detects editor font family and terminal font; warns if not installed system-wide                       |
+| **themes**           | Detects color theme and icon theme; warns if not available in VS Code marketplace                      |
 
 Cursor-only extensions that are skipped (not on the VS Code marketplace):
 

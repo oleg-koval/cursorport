@@ -54,7 +54,10 @@ function cleanupOldBackups(backupRoot: string, maxBackups: number): void {
 }
 
 export function backup(paths: Paths, opts: BackupOptions = {}): BackupResult {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '').split('T')[0] + '_' + Date.now().toString().slice(-6)
+  const timestamp =
+    new Date().toISOString().replace(/[:.]/g, '').split('T')[0] +
+    '_' +
+    Date.now().toString().slice(-6)
   const backupName = `cursor_backup_${timestamp}`
   const backupRoot = join(homedir(), 'cursor_backup')
   const backupDir = join(backupRoot, backupName)
@@ -71,11 +74,13 @@ export function backup(paths: Paths, opts: BackupOptions = {}): BackupResult {
   try {
     mkdirSync(backupDir, { recursive: true })
 
-    execSync(`rsync -av --exclude='workspaceStorage' --exclude='globalStorage' --exclude='logs' "${paths.cursorUser}/" "${join(backupDir, 'User')}"`
-    , {
-      stdio: 'pipe',
-      shell: '/bin/bash',
-    })
+    execSync(
+      `rsync -av --exclude='workspaceStorage' --exclude='globalStorage' --exclude='logs' "${paths.cursorUser}/" "${join(backupDir, 'User')}"`,
+      {
+        stdio: 'pipe',
+        shell: '/bin/bash',
+      },
+    )
 
     const extensionsOutput = execSync('cursor --list-extensions 2>/dev/null || echo ""', {
       encoding: 'utf8',
