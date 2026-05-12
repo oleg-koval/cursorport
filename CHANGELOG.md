@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/oleg-koval/cursorport/compare/v1.1.1...v1.1.2) (2026-05-12)
+
+
+### Bug Fixes
+
+* add rclone backup/restore scripts and fix prettier formatting ([a671895](https://github.com/oleg-koval/cursorport/commit/a6718953289cfe6ba9c4c8661eeb94ccc0e71600))
+
 ## [1.1.1](https://github.com/oleg-koval/cursorport/compare/v1.1.0...v1.1.1) (2026-05-11)
 
 ### Bug Fixes
