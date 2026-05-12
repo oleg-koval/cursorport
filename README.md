@@ -89,6 +89,7 @@ cursorport
 To copy your Cursor setup to another Mac (before migrating to VS Code):
 
 **On your first Mac (source):**
+
 1. Run `npx cursorport --backup` to create a backup
 2. Backup saved to `~/.cursorport_backup_<timestamp>`
 3. Transfer the backup to your other Mac:
@@ -97,6 +98,7 @@ To copy your Cursor setup to another Mac (before migrating to VS Code):
    - **Network:** `scp` or AirDrop the backup folder
 
 **On your second Mac (target):**
+
 1. Download/transfer the backup folder to your Mac
 2. Extract the backup (if it's zipped)
 3. Copy settings manually:
