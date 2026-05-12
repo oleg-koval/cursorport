@@ -84,6 +84,35 @@ cursorport
 
 **VS Code:** Open VS Code → Command Palette → `Shell Command: Install 'code' command in PATH`
 
+## Transfer Cursor settings between Macs
+
+To copy your Cursor setup to another Mac (before migrating to VS Code):
+
+**On your first Mac (source):**
+1. Run `npx cursorport --backup` to create a backup
+2. Backup saved to `~/.cursorport_backup_<timestamp>`
+3. Transfer the backup to your other Mac:
+   - **Cloud:** Upload to Drive/Dropbox/iCloud
+   - **USB:** Copy to external drive
+   - **Network:** `scp` or AirDrop the backup folder
+
+**On your second Mac (target):**
+1. Download/transfer the backup folder to your Mac
+2. Extract the backup (if it's zipped)
+3. Copy settings manually:
+   - Settings: `~/.cursor/User/settings.json`
+   - Keybindings: `~/.cursor/User/keybindings.json`
+   - Snippets: `~/.cursor/User/snippets/`
+   - Profiles: `~/.cursor/User/profiles/`
+4. Reinstall extensions:
+   - Open the backup folder
+   - Find `extensions.txt` (list of your extensions)
+   - Run: `cat extensions.txt | xargs -I {} cursor --install-extension {}`
+5. Restart Cursor to apply all changes
+
+**Then migrate to VS Code:**
+Once Cursor is set up on the new Mac, run `npx cursorport` to migrate everything to VS Code.
+
 ## What gets migrated
 
 Complete migration of your Cursor configuration to VS Code:
